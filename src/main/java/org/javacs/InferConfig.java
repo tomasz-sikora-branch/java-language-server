@@ -272,7 +272,7 @@ class InferConfig {
 
         // Add rest of classpath
         for (var relative :
-                bazelAQuery(bazelWorkspaceRoot, "Javac", "--classpath", "java_library", "java_test", "java_binary")) {
+                bazelAQuery(bazelWorkspaceRoot, "Javac", "--classpath", "java_library", "java_test", "java_binary", "branch_java_test", "branch_java_library", "branch_java_binary")) {
             absolute.add(bazelWorkspaceRoot.resolve(relative));
         }
         return absolute;
@@ -283,7 +283,7 @@ class InferConfig {
         var outputBase = bazelOutputBase(bazelWorkspaceRoot);
         for (var relative :
                 bazelAQuery(
-                        bazelWorkspaceRoot, "JavaSourceJar", "--sources", "java_library", "java_test", "java_binary")) {
+                        bazelWorkspaceRoot, "JavaSourceJar", "--sources", "java_library", "java_test", "java_binary", "branch_java_test", "branch_java_library", "branch_java_binary")) {
             absolute.add(outputBase.resolve(relative));
         }
 
