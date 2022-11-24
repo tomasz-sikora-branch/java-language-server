@@ -1,6 +1,6 @@
 {
     "name": "vscode-javac",
-    "displayName": "Java Language Support",
+    "displayName": "LSP for Branch data-platform",
     "description": "Java support using the Java Compiler API",
     "icon": "icon.png",
     "version": "0.2.42",
@@ -182,16 +182,16 @@
     "dependencies": {
         "adm-zip": "^0.4.13",
         "jsonc-parser": "^2.1.1",
+        "typescript": "^4.7.4",
         "vscode-debugadapter": "^1.35.0",
-        "vscode-languageclient": "^5.3.0-next.4"
+        "vscode-languageclient": "^5.3.0-next.4",
+        "vscode-languageserver-protocol": "^3.17.2"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.32",
         "@types/mocha": "^2.2.42",
         "@types/node": "^10.14.6",
         "@types/vscode": "^1.37.0",
-        "typescript": "^3.9.10",
-        "vsce": "^2.9.2",
         "vscode-debugadapter-testsupport": "^1.35.0",
         "vscode-test": "^1.2.0"
     }

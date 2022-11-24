@@ -23,7 +23,7 @@ public class IncrementalCompileTest implements TaskListener, DiagnosticListener<
     final JavaCompiler compiler = ServiceLoader.load(JavaCompiler.class).iterator().next();
     final Path src = Paths.get("src/test/examples/incremental-compile/src").toAbsolutePath();
     final Path foo = src.resolve("foo/bar/Foo.java");
-    final List<String> options = List.of("-sourcepath", src.toString(), "-verbose", "-proc:none");
+    final List<String> options = List.of("-sourcepath", src.toString(), "-verbose");
 
     @Before
     public void setLogFormat() {

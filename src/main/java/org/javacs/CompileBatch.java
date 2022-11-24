@@ -117,6 +117,7 @@ class CompileBatch implements AutoCloseable {
         Collections.addAll(list, "--add-modules", "ALL-MODULE-PATH");
         // Collections.addAll(list, "-verbose");
         Collections.addAll(list, "-proc:none");
+        // Collections.addAll(list,"-processor","lombok.launch.AnnotationProcessorHider$AnnotationProcessor");
         Collections.addAll(list, "-g");
         // You would think we could do -Xlint:all,
         // but some lints trigger fatal errors in the presence of parse errors

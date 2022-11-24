@@ -66,11 +66,7 @@ class InferConfig {
             return result;
         }
 
-        // Maven
-        var pomXml = workspaceRoot.resolve("pom.xml");
-        if (Files.exists(pomXml)) {
-            return mvnDependencies(pomXml, "dependency:list");
-        }
+
 
         // Bazel
         var bazelWorkspaceRoot = bazelWorkspaceRoot();
@@ -107,11 +103,6 @@ class InferConfig {
             return result;
         }
 
-        // Maven
-        var pomXml = workspaceRoot.resolve("pom.xml");
-        if (Files.exists(pomXml)) {
-            return mvnDependencies(pomXml, "dependency:sources");
-        }
 
         // Bazel
         var bazelWorkspaceRoot = bazelWorkspaceRoot();
@@ -262,57 +253,86 @@ class InferConfig {
 
     private Set<Path> bazelClasspath(Path bazelWorkspaceRoot) {
         var absolute = new HashSet<Path>();
+        var outputBase = bazelOutputBase(bazelWorkspaceRoot);
+            try {
+            Files.find(bazelWorkspaceRoot, 999, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*\\.java"))
+            .forEach(j->absolute.add(j));
+            Files.find(outputBase, 999, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*\\.jar"))
+            .forEach(j->absolute.add(j));
+            Files.find(outputBase, 999, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*\\.class"))
+            .forEach(j->absolute.add(j));
 
-        // Add protos
-        if (buildProtos(bazelWorkspaceRoot)) {
-            for (var relative : bazelAQuery(bazelWorkspaceRoot, "Javac", "--output", "proto_library")) {
-                absolute.add(bazelWorkspaceRoot.resolve(relative));
+                
+            } catch (IOException e)  {
+
             }
-        }
+            //Files.find(Paths.get(sDir), 999, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*\\.java")).forEach(p->absolute.add(bazelWorkspaceRoot.relative(p)));
 
-        // Add rest of classpath
-        for (var relative :
-                bazelAQuery(bazelWorkspaceRoot, "Javac", "--classpath", "java_library", "java_test", "java_binary")) {
-            absolute.add(bazelWorkspaceRoot.resolve(relative));
-        }
+
+//         // Add protos
+//         if (buildProtos(bazelWorkspaceRoot)) {
+//             for (var relative : bazelAQuery(bazelWorkspaceRoot, "Javac", "--output", "proto_library")) {
+//                 absolute.add(bazelWorkspaceRoot.resolve(relative));
+//             }
+//         }
+
+//         // Add rest of classpath
+//         for (var relative :
+//                 bazelAQuery(bazelWorkspaceRoot, "Javac", "--classpath",
+
+                
+//                  "java_library", "java_test", "java_binary","_branch_java_binary"
+// ,"_branch_java_binary_shaded"
+// ,"_branch_java_group"
+// ,"_branch_java_group_shaded"
+// ,"_branch_java_library"
+// ,"_branch_java_library_shaded"
+// ,"_branch_java_resource_jar"
+// ,"_branch_java_test"
+// ,"_java_testng"
+// ,"_java_integration_test_suite"
+// ,"_java_unit_test_suite"
+// ,"_jvm_maven_import_external"
+// ,"_jvm_maven_import_external_group")) {
+//             absolute.add(bazelWorkspaceRoot.resolve(relative));
+//         }
         return absolute;
     }
 
     private Set<Path> bazelSourcepath(Path bazelWorkspaceRoot) {
         var absolute = new HashSet<Path>();
         var outputBase = bazelOutputBase(bazelWorkspaceRoot);
-        for (var relative :
-                bazelAQuery(
-                        bazelWorkspaceRoot, "JavaSourceJar", "--sources", "java_library", "java_test", "java_binary")) {
-            absolute.add(outputBase.resolve(relative));
-        }
+        try {
+            Files.find(bazelWorkspaceRoot, 999, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*\\.java"))
+            .forEach(j->absolute.add(j));
+            Files.find(outputBase, 999, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*\\.srcjar"))
+            .forEach(j->absolute.add(j));
 
-        // Add proto source files
-        if (buildProtos(bazelWorkspaceRoot)) {
-            for (var relative : bazelAQuery(bazelWorkspaceRoot, "Javac", "--source_jars", "proto_library")) {
-                absolute.add(bazelWorkspaceRoot.resolve(relative));
+                
+            } catch (IOException e)  {
+
             }
-        }
+
+//         for (var relative :
+//                 bazelAQuery(
+//                         bazelWorkspaceRoot, "JavaSourceJar", "--sources", "java_library", "java_test", "java_binary")) {
+//             absolute.add(outputBase.resolve(relative));
+//         }
+
+//         // Add proto source files
+//         if (buildProtos(bazelWorkspaceRoot)) {
+//             for (var relative : bazelAQuery(bazelWorkspaceRoot, "Javac", "--source_jars", "proto_library")) {
+//                 absolute.add(bazelWorkspaceRoot.resolve(relative));
+//             }
+//         }
 
         return absolute;
     }
 
     private Path bazelOutputBase(Path bazelWorkspaceRoot) {
-        // Run bazel as a subprocess
-        String[] command = {
-            "bazel", "info", "output_base",
-        };
-        var output = fork(bazelWorkspaceRoot, command);
-        if (output == NOT_FOUND) {
-            return NOT_FOUND;
-        }
-        // Read output
-        try {
-            var out = Files.readString(output).trim();
-            return Paths.get(out);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // Run bazel as a subprocess'
+        return Paths.get("/var/tmp/bazel/b62a3b1d4062d146726049a29529eeae");
+       
     }
 
     private void bazelDryRunBuild(Path bazelWorkspaceRoot, Set<String> targets) {
